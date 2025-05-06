@@ -10,7 +10,7 @@ public class FlappyShapeGame extends Game {
     @Override
     public void create() {
         batch = new SpriteBatch();
-        score = 0;
+        this.score = 0;
         setScreen(new GameScreen(this));
     }
 
@@ -25,7 +25,7 @@ public class FlappyShapeGame extends Game {
     }
 
     public void resetScore() {
-        score = 0;
+        this.score = 0;
     }
 
     public int getScore() {
