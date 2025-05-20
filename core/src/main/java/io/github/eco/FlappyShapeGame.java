@@ -5,34 +5,38 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class FlappyShapeGame extends Game {
     public int score;
+    public int highScore = 0;
     private SpriteBatch batch;
 
     @Override
     public void create() {
         batch = new SpriteBatch();
-        this.score = 0;
-        setScreen(new GameScreen(this));
-    }
-
-    @Override
-    public void render() {
-        super.render();
-    }
-
-    @Override
-    public void dispose() {
-        batch.dispose();
+        score = 0;
+        this.setScreen(new MenuScreen(this));
     }
 
     public void resetScore() {
-        this.score = 0;
+        score = 0;
+    }
+
+    public SpriteBatch getBatch() {
+        return batch;
     }
 
     public int getScore() {
         return score;
     }
 
-    public SpriteBatch getBatch() {
-        return batch;
+    public int getHighScore() {
+        return highScore;
+    }
+
+    public void updateHighScore() {
+        if (score > highScore) highScore = score;
+    }
+
+    @Override
+    public void dispose() {
+        batch.dispose();
     }
 }
