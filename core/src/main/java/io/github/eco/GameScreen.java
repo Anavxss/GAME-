@@ -5,55 +5,65 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Intersector;
 
 public class GameScreen implements Screen {
-
     private final FlappyShapeGame game;
     private Player player;
-    private Array<Obstacle> obstacles;
-    private Array<Collectible> collectibles;
-    private ShapeRenderer shapeRenderer;
-
+    private Array < Obstacle > obstacles;
+    private Array < Collectible > collectibles;
+    private ShapeRenderer sr;
+    private float spawnTimer = 0;
     public GameScreen(FlappyShapeGame game) {
         this.game = game;
-    }
-
-    @Override
-    public void show() {
-        shapeRenderer = new ShapeRenderer();
+        sr = new ShapeRenderer();
         player = new Player(100, Gdx.graphics.getHeight() / 2, 20);
-        obstacles = new Array<>();
-        collectibles = new Array<>();
-
-        for (int i = 0; i < 5; i++) {
-            obstacles.add(new Obstacle(400 + i * 300, 0, 50, 200 + i * 20));
-            collectibles.add(new Collectible(600 + i * 300));
-        }
+        obstacles = new Array < > ();
+        collectibles = new Array < > ();
     }
-
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(0, 0, 0.2f, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
+        spawnTimer += delta;
+        if(spawnTimer > 2f) {
+            obstacles.add(new Obstacle(800, MathUtils.random(100, 500), 30, 10));
+            collectibles.add(new Collectible(800));
+            spawnTimer = 0;
+        }
         player.update(delta);
-        for (Obstacle obstacle : obstacles) obstacle.update(delta);
-        for (Collectible collectible : collectibles) collectible.update(delta);
-
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        player.draw(shapeRenderer);
-        for (Obstacle obstacle : obstacles) obstacle.draw(shapeRenderer);
-        for (Collectible collectible : collectibles) collectible.draw(shapeRenderer);
-        shapeRenderer.end();
+        for(Obstacle o: obstacles) o.update(delta);
+        for(Collectible c: collectibles) c.update(delta);
+        for(Collectible c: collectibles) {
+            if(!c.collected && c.isCollected(player)) {
+                c.collected = true;
+                game.score++;
+            }
+        }
+        if(checkCollision()) {
+            game.updateHighScore();
+            game.setScreen(new GameOverScreen(game));
+        }
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        sr.begin(ShapeRenderer.ShapeType.Filled);
+        player.draw(sr);
+        for(Obstacle o: obstacles) o.draw(sr);
+        for(Collectible c: collectibles)
+            if(!c.collected) c.draw(sr);
+        sr.end();
     }
-
+    private boolean checkCollision() {
+        for(Obstacle o: obstacles) {
+            if (Intersector.overlaps(player.circle, o.rect)) return true;
+        }
+        return false;
+    }
+    @Override public void show() {}
     @Override public void resize(int width, int height) {}
     @Override public void pause() {}
     @Override public void resume() {}
     @Override public void hide() {}
-
-    @Override
-    public void dispose() {
-        shapeRenderer.dispose();
+    @Override public void dispose() {
+        sr.dispose();
     }
 }
