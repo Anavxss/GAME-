@@ -4,7 +4,7 @@
             "outputFile": "io.github.eco.android-mergeDebugResources-9:/values-pt-rBR/values-pt-rBR.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\saltv\\.gradle\\caches\\8.14\\transforms\\028e03fb029acdecb5df30f1ba0be800\\transformed\\core-1.13.1\\res\\values-pt-rBR\\values-pt-rBR.xml",
+                    "source": "C:\\Users\\anavx\\.gradle\\caches\\8.9\\transforms\\3155b75fdad9014756816c536556de52\\transformed\\core-1.13.1\\res\\values-pt-rBR\\values-pt-rBR.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9",
                         "startColumns": "4,4,4,4,4,4,4,4",

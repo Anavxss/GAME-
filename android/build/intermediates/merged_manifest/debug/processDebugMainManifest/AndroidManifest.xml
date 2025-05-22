@@ -5,7 +5,7 @@
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="19"
+        android:minSdkVersion="35"
         android:targetSdkVersion="35" />
 
     <uses-feature
@@ -23,12 +23,11 @@
         android:appCategory="game"
         android:appComponentFactory="androidx.core.app.CoreComponentFactory"
         android:debuggable="true"
-        android:extractNativeLibs="true"
+        android:extractNativeLibs="false"
         android:fullBackupContent="true"
         android:icon="@drawable/ic_launcher"
         android:isGame="true"
         android:label="@string/app_name"
-        android:testOnly="true"
         android:theme="@style/GdxTheme" >
         <activity
             android:name="io.github.eco.android.AndroidLauncher"

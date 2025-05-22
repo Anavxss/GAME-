@@ -1,1 +1,6 @@
+background.png
+bullet.png
 circle.png
+font.ttf
+lixo.png
+player.png

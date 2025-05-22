@@ -1,0 +1,4 @@
+io.github.eco.test.android-androidTest-0 C:\Users\anavx\Downloads\05-05\GAME--\android\build\generated\res\resValues\androidTest\debug
+io.github.eco.test.android-mergeDebugAndroidTestResources-1 C:\Users\anavx\Downloads\05-05\GAME--\android\build\intermediates\incremental\debugAndroidTest\mergeDebugAndroidTestResources\merged.dir
+io.github.eco.test.android-mergeDebugAndroidTestResources-2 C:\Users\anavx\Downloads\05-05\GAME--\android\build\intermediates\incremental\debugAndroidTest\mergeDebugAndroidTestResources\stripped.dir
+io.github.eco.test.android-debugAndroidTest-3 C:\Users\anavx\Downloads\05-05\GAME--\android\build\intermediates\merged_res\debugAndroidTest\mergeDebugAndroidTestResources

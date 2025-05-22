@@ -32,13 +32,8 @@ android {
   }
   defaultConfig {
     applicationId 'io.github.eco'
-<<<<<<< HEAD
       minSdk 35
       targetSdkVersion 35
-=======
-    minSdkVersion 19
-    targetSdkVersion 35
->>>>>>> 503f9ffd8403a83543285cce9f4d5c7d59c1b789
     versionCode 1
     versionName "1.0"
     multiDexEnabled true
@@ -64,11 +59,7 @@ repositories {
 configurations { natives }
 
 dependencies {
-<<<<<<< HEAD
   coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
-=======
-  coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
->>>>>>> 503f9ffd8403a83543285cce9f4d5c7d59c1b789
   implementation "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
   implementation project(':core')
 
