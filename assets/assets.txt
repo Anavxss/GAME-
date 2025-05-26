@@ -1,0 +1,7 @@
+background.png
+bullet.png
+circle.png
+font.ttf
+lixo.png
+pause.png
+player.png
