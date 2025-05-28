@@ -12,13 +12,13 @@ public class DificuldadeScreen implements Screen {
     private final FlappyShapeGame game;
     private SpriteBatch batch;
     private BitmapFont font;
-    private Texture background;
+    private Texture backgrounddificuldade;
 
     public DificuldadeScreen(FlappyShapeGame game) {
         this.game = game;
         this.batch = game.getBatch();
         font = new BitmapFont();
-        background = new Texture("background.png");
+        backgrounddificuldade = new Texture("start.jpeg");
     }
 
     @Override
@@ -30,9 +30,7 @@ public class DificuldadeScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         batch.begin();
-        batch.draw(background, 0, 0, 1280, 720);
-        font.getData().setScale(2.5f);
-        font.draw(batch, "Escolha a Dificuldade", 420, 550);
+        batch.draw(backgrounddificuldade, 0, 0, 1280, 720);
         font.getData().setScale(2f);
         font.draw(batch, "1. Facil", 550, 450);
         font.draw(batch, "2. Medio", 550, 380);
@@ -55,6 +53,6 @@ public class DificuldadeScreen implements Screen {
     @Override public void hide() {}
     @Override public void dispose() {
         font.dispose();
-        background.dispose();
+        backgrounddificuldade.dispose();
     }
 }

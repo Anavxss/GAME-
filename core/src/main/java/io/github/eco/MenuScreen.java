@@ -7,25 +7,30 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 
 public class MenuScreen implements Screen {
 
     private final FlappyShapeGame game;
     private BitmapFont font;
     private SpriteBatch batch;
-    private Texture background;
+    private Texture backgroundstart;
 
     private String dificuldade = "Medio"; // padrão
+
 
     public MenuScreen(FlappyShapeGame game) {
         this.game = game;
         this.batch = game.batch;
         font = new BitmapFont();
-        background = new Texture("background.png");
+        backgroundstart = new Texture("start.jpeg");
+
     }
 
     @Override
-    public void show() {}
+    public void show() {
+    }
 
     @Override
     public void render(float delta) {
@@ -33,10 +38,8 @@ public class MenuScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         batch.begin();
-        batch.draw(background, 0, 0, 1280, 720);
+        batch.draw(backgroundstart, 0, 0, 1280, 720);
 
-        font.getData().setScale(3f);
-        font.draw(batch, "Flappy Shape", 480, 600);
 
         batch.end();
 
@@ -45,7 +48,7 @@ public class MenuScreen implements Screen {
             game.camera.unproject(touchPos);
 
             // Inicia jogo se clicar na área do texto iniciar
-            if(touchPos.y > 240 && touchPos.y < 280) {
+            if(touchPos.y > 100 && touchPos.y < 120) {
                 game.setScreen(new DificuldadeScreen(game));
             }
         }
@@ -63,6 +66,6 @@ public class MenuScreen implements Screen {
     @Override
     public void dispose() {
         font.dispose();
-        background.dispose();
+        backgroundstart.dispose();
     }
 }

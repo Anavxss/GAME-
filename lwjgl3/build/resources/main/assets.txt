@@ -1,7 +1,12 @@
 background.png
 bullet.png
 circle.png
+down.jpeg
 font.ttf
+gameover.jpeg
 lixo.png
+pause.jpeg
 pause.png
 player.png
+start.jpeg
+up.jpeg

@@ -13,6 +13,8 @@ public class GameOverScreen implements Screen {
     private BitmapFont font;
     private int finalScore;
 
+    private Texture backgroundfim;
+
     public GameOverScreen(FlappyShapeGame game, int score) {
         this.game = game;
         this.batch = game.getBatch();
@@ -24,6 +26,8 @@ public class GameOverScreen implements Screen {
         }
 
         font = new BitmapFont(); // Usa a fonte padrão, sem erro
+
+        backgroundfim = new Texture("gameover.jpeg");
     }
 
     @Override
@@ -35,6 +39,7 @@ public class GameOverScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         batch.begin();
+        batch.draw(backgroundfim, 0, 0, 1280, 720);
         font.draw(batch, "FIM DE JOGO", 300, 350);
         font.draw(batch, "Pontuação: " + finalScore, 300, 300);
         font.draw(batch, "Recorde: " + game.getHighScore(), 300, 250);

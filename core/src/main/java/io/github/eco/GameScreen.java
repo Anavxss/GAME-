@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -16,6 +17,13 @@ import com.badlogic.gdx.utils.Array;
 public class GameScreen implements Screen {
     private boolean paused = false;
 
+    // botãos jogaveis
+    private Rectangle upButton;
+    private Rectangle downButton;
+    private Texture upTexture;
+    private Texture downTexture;
+
+    // até aqui
     private TextureRegion playerRegion;
 
     private Rectangle pauseButton;
@@ -24,6 +32,8 @@ public class GameScreen implements Screen {
     private BitmapFont font;
 
     private Texture background;
+
+    private Texture backgroundpause;
     private float bgX;
 
     private Texture pngpause;
@@ -40,16 +50,32 @@ public class GameScreen implements Screen {
     private float spawnLixoTimer;
     private float spawnBulletTimer;
 
-    private float spawnLixoInterval = 2.5f;
-    private float spawnBulletInterval = 1.8f;
+    private float spawnLixoInterval = 1f;
+    private float spawnBulletInterval = 0.8f;
 
     private int score;
     private int velocidadeLixo;
     private int velocidadeBullet;
 
+    private OrthographicCamera camera;
+
+    private boolean isButtonPressed(Rectangle bounds){
+        if (Gdx.input.justTouched()) {
+            Vector3 touchPos = new
+                    Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+            camera.unproject(touchPos);
+            return
+                    bounds.contains(touchPos.x, touchPos.y);
+        }
+        return false;
+    }
+
     public GameScreen(FlappyShapeGame game, String dificuldade) {
         this.game = game;
         this.batch = game.batch;
+
+        camera = new OrthographicCamera();
+        camera.setToOrtho(false, 1280,720);
 
         switch (dificuldade) {
             case "Lento":
@@ -68,11 +94,16 @@ public class GameScreen implements Screen {
                 velocidadeLixo = 350;
                 velocidadeBullet = 400;
         }
+
+        backgroundpause = new Texture("pause.jpeg");
+
     }
 
     @Override
     public void show() {
 
+        upTexture = new Texture("up.jpeg");
+        downTexture = new Texture("down.jpeg");
         pngpause = new Texture("pause.png");
         background = new Texture("background.png");
         playerTexture = new Texture("player.png");
@@ -98,10 +129,21 @@ public class GameScreen implements Screen {
 
         font = new BitmapFont();
         score = 0;
+
+        float btnSize = 64;
+        float padding = 20;
+
+        upButton = new Rectangle(Gdx.graphics.getWidth() - btnSize - padding,
+                Gdx.graphics.getHeight() - btnSize - padding,  btnSize, btnSize);
+
+        downButton = new Rectangle(Gdx.graphics.getWidth() - btnSize - padding,
+                Gdx.graphics.getHeight() - 2 * (btnSize + padding),  btnSize, btnSize);
     }
 
     @Override
     public void render(float delta) {
+
+
         // Atualizar fundo rolante
         bgX -= 200 * delta;
         if (bgX <= -background.getWidth()) bgX = 0;
@@ -118,19 +160,21 @@ public class GameScreen implements Screen {
 // Se pausado, exibe menu de pausa
         if (paused) {
             batch.begin();
-            font.draw(batch, "PAUSADO", 580, 450);
-            font.draw(batch, "1. Retomar", 550, 380);
-            font.draw(batch, "2. Reiniciar", 550, 320);
-            font.draw(batch, "3. Menu Principal", 550, 260);
+            batch.draw(backgroundpause, 0, 0, 1280, 720);
+            font.draw(batch, "Retomar", 250, 120);
+            font.draw(batch, "Reiniciar", 550, 120);
+            font.draw(batch, "Menu Principal", 850, 120);
             batch.end();
 
             if (Gdx.input.justTouched()) {
                 Vector3 touch = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
                 game.camera.unproject(touch);
 
-                if (touch.y > 360 && touch.y < 400) paused = false; // Retomar
-                else if (touch.y > 300 && touch.y < 340) game.setScreen(new GameScreen(game,"Medio")); // Reinicia com mesma dificuldade (ajustar se necessário)
-                else if (touch.y > 240 && touch.y < 280) game.setScreen(new MenuScreen(game)); // Volta ao menu
+                if (touch.y > 100 && touch.y < 140 && touch.x > 200 && touch.x < 300) paused = false; // Retomar
+                else if (touch.y > 100 && touch.y < 140 && touch.x > 500 && touch.x < 600)
+                    game.setScreen(new GameScreen(game, "Medio")); // Reinicia com mesma dificuldade (ajustar se necessário)
+                else if (touch.y > 120 && touch.y < 140 && touch.x > 800 && touch.x < 900)
+                    game.setScreen(new MenuScreen(game)); // Volta ao menu
             }
             return; // não processa jogo se pausado
         }
@@ -142,6 +186,16 @@ public class GameScreen implements Screen {
             if (player.y > 720 - player.height) player.y = 720 - player.height;
         }
         if (Gdx.input.isKeyPressed(Input.Keys.S)) {
+            player.y -= playerSpeed * delta;
+            if (player.y < 0) player.y = 0;
+        }
+
+        // Controle do player botões, limitar dentro da tela (0 a 720)
+        if (isButtonPressed(upButton)) {
+            player.y += playerSpeed * delta;
+            if (player.y > 720 - player.height) player.y = 720 - player.height;
+        }
+        if (isButtonPressed(downButton)) {
             player.y -= playerSpeed * delta;
             if (player.y < 0) player.y = 0;
         }
@@ -207,7 +261,7 @@ public class GameScreen implements Screen {
                 if (score > game.getHighScore()) {
                     game.setHighScore(score);
                 }
-                game.setScreen(new MenuScreen(game)); // voltar para menu
+                game.setScreen(new GameOverScreen(game, score)); // voltar para tela de Game Over
                 dispose();
                 return;
             }
@@ -224,7 +278,7 @@ public class GameScreen implements Screen {
         batch.draw(background, bgX + background.getWidth(), 0, background.getWidth(), 720);
 
         // Player
-        batch.draw(playerRegion, player.x, player.y, player.width, player.height);
+        batch.draw(playerRegion, player.x, player.y, 95, 78);
 
         // Lixos (coletáveis)
         for (Rectangle lixo : lixos) {
@@ -233,7 +287,7 @@ public class GameScreen implements Screen {
 
         // Bullets (obstáculos)
         for (Rectangle bullet : bullets) {
-            batch.draw(bulletTexture, bullet.x, bullet.y, bullet.width, bullet.height);
+            batch.draw(bulletTexture, bullet.x, bullet.y, 78, 78);
         }
 
         // Pontuação
@@ -245,6 +299,18 @@ public class GameScreen implements Screen {
         batch.begin();
         batch.draw(pngpause, pauseButton.x, pauseButton.y, pauseButton.width, pauseButton.height);
         batch.end();
+
+
+        // Setas
+        batch.begin();
+        batch.draw(upTexture, 900, 300, 300, 200);
+        batch.draw(downTexture, 900, 50, 300, 200);
+        batch.end();
+
+
+
+        // setas fim
+
     }
 
     @Override
@@ -266,6 +332,9 @@ public class GameScreen implements Screen {
         lixoTexture.dispose();
         bulletTexture.dispose();
         font.dispose();
+        upTexture.dispose();
+        downTexture.dispose();
+
     }
 
     public boolean isPaused() {
