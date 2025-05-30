@@ -1,6 +1,7 @@
 package io.github.eco;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 
@@ -11,11 +12,18 @@ public class FlappyShapeGame extends Game {
 
     private int highScore = 0;
 
+    private float screenWidth;
+    private float screenHeight;
+
     @Override
     public void create() {
+        screenWidth = Gdx.graphics.getWidth();
+        screenHeight = Gdx.graphics.getHeight();
         batch = new SpriteBatch();
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, 1280, 720); // resolução em modo paisagem
+        camera.setToOrtho(false, screenWidth, screenHeight); // resolução em modo paisagem
+
+
 
         setScreen(new MenuScreen(this));
     }

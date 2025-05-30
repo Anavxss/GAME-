@@ -15,6 +15,9 @@ public class GameOverScreen implements Screen {
 
     private Texture backgroundfim;
 
+    private float screenWidth;
+    private float screenHeight;
+
     public GameOverScreen(FlappyShapeGame game, int score) {
         this.game = game;
         this.batch = game.getBatch();
@@ -28,6 +31,10 @@ public class GameOverScreen implements Screen {
         font = new BitmapFont(); // Usa a fonte padrão, sem erro
 
         backgroundfim = new Texture("gameover.jpeg");
+
+        screenWidth = Gdx.graphics.getWidth();
+        screenHeight = Gdx.graphics.getHeight();
+
     }
 
     @Override
@@ -38,12 +45,13 @@ public class GameOverScreen implements Screen {
         Gdx.gl.glClearColor(0.1f, 0, 0.2f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+
         batch.begin();
-        batch.draw(backgroundfim, 0, 0, 1280, 720);
-        font.draw(batch, "FIM DE JOGO", 300, 350);
-        font.draw(batch, "Pontuação: " + finalScore, 300, 300);
-        font.draw(batch, "Recorde: " + game.getHighScore(), 300, 250);
-        font.draw(batch, "Toque para voltar ao menu", 250, 180);
+        batch.draw(backgroundfim, 0, 0, screenWidth, screenHeight);
+        font.getData().setScale(4f);
+        font.draw(batch, "Pontuação: " + finalScore, screenWidth / 1.5f + 100, screenHeight / 2 + 100);
+        font.getData().setScale(4f);
+        font.draw(batch, "Recorde: " + game.getHighScore(), screenWidth / 1.5f + 100, screenHeight / 2 + 50);
         batch.end();
 
         if (Gdx.input.justTouched()) {

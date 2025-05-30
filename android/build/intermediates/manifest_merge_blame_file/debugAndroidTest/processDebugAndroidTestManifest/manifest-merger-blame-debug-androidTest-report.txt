@@ -3,32 +3,32 @@
 3    package="io.github.eco.test" >
 4
 5    <uses-sdk
-5-->C:\Users\anavx\Downloads\05-05\GAME--\android\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest1767751180276155991.xml:5:5-74
-6        android:minSdkVersion="35"
-6-->C:\Users\anavx\Downloads\05-05\GAME--\android\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest1767751180276155991.xml:5:15-41
-7        android:targetSdkVersion="35" />
-7-->C:\Users\anavx\Downloads\05-05\GAME--\android\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest1767751180276155991.xml:5:42-71
+5-->C:\Users\saltv\Desktop\GAME--main\android\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest3673548820215796612.xml:5:5-74
+6        android:minSdkVersion="21"
+6-->C:\Users\saltv\Desktop\GAME--main\android\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest3673548820215796612.xml:5:15-41
+7        android:targetSdkVersion="34" />
+7-->C:\Users\saltv\Desktop\GAME--main\android\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest3673548820215796612.xml:5:42-71
 8
 9    <instrumentation
-9-->C:\Users\anavx\Downloads\05-05\GAME--\android\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest1767751180276155991.xml:11:5-15:63
+9-->C:\Users\saltv\Desktop\GAME--main\android\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest3673548820215796612.xml:11:5-15:63
 10        android:name="android.test.InstrumentationTestRunner"
-10-->C:\Users\anavx\Downloads\05-05\GAME--\android\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest1767751180276155991.xml:11:22-75
+10-->C:\Users\saltv\Desktop\GAME--main\android\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest3673548820215796612.xml:11:22-75
 11        android:functionalTest="false"
-11-->C:\Users\anavx\Downloads\05-05\GAME--\android\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest1767751180276155991.xml:14:22-52
+11-->C:\Users\saltv\Desktop\GAME--main\android\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest3673548820215796612.xml:14:22-52
 12        android:handleProfiling="false"
-12-->C:\Users\anavx\Downloads\05-05\GAME--\android\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest1767751180276155991.xml:13:22-53
+12-->C:\Users\saltv\Desktop\GAME--main\android\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest3673548820215796612.xml:13:22-53
 13        android:label="Tests for io.github.eco"
-13-->C:\Users\anavx\Downloads\05-05\GAME--\android\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest1767751180276155991.xml:15:22-61
+13-->C:\Users\saltv\Desktop\GAME--main\android\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest3673548820215796612.xml:15:22-61
 14        android:targetPackage="io.github.eco" />
-14-->C:\Users\anavx\Downloads\05-05\GAME--\android\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest1767751180276155991.xml:12:22-59
+14-->C:\Users\saltv\Desktop\GAME--main\android\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest3673548820215796612.xml:12:22-59
 15
 16    <application
-16-->C:\Users\anavx\Downloads\05-05\GAME--\android\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest1767751180276155991.xml:7:5-9:19
+16-->C:\Users\saltv\Desktop\GAME--main\android\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest3673548820215796612.xml:7:5-9:19
 17        android:debuggable="true"
-18        android:extractNativeLibs="false" >
+18        android:extractNativeLibs="true" >
 19        <uses-library android:name="android.test.runner" />
-19-->C:\Users\anavx\Downloads\05-05\GAME--\android\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest1767751180276155991.xml:8:9-60
-19-->C:\Users\anavx\Downloads\05-05\GAME--\android\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest1767751180276155991.xml:8:23-57
+19-->C:\Users\saltv\Desktop\GAME--main\android\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest3673548820215796612.xml:8:9-60
+19-->C:\Users\saltv\Desktop\GAME--main\android\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest3673548820215796612.xml:8:23-57
 20    </application>
 21
 22</manifest>

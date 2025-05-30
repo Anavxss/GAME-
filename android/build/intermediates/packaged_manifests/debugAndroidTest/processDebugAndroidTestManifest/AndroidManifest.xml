@@ -3,8 +3,8 @@
     package="io.github.eco.test" >
 
     <uses-sdk
-        android:minSdkVersion="35"
-        android:targetSdkVersion="35" />
+        android:minSdkVersion="21"
+        android:targetSdkVersion="34" />
 
     <instrumentation
         android:name="android.test.InstrumentationTestRunner"
@@ -15,7 +15,7 @@
 
     <application
         android:debuggable="true"
-        android:extractNativeLibs="false" >
+        android:extractNativeLibs="true" >
         <uses-library android:name="android.test.runner" />
     </application>
 

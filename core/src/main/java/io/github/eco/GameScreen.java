@@ -17,34 +17,38 @@ import com.badlogic.gdx.utils.Array;
 public class GameScreen implements Screen {
     private boolean paused = false;
 
-    // botãos jogaveis
     private Rectangle upButton;
     private Rectangle downButton;
     private Texture upTexture;
     private Texture downTexture;
 
-    // até aqui
     private TextureRegion playerRegion;
-
     private Rectangle pauseButton;
     private final FlappyShapeGame game;
     private SpriteBatch batch;
     private BitmapFont font;
 
     private Texture background;
-
     private Texture backgroundpause;
     private float bgX;
+
+    private float bgSpeed = 100f;
 
     private Texture pngpause;
     private Texture playerTexture;
     private Rectangle player;
     private float playerSpeed = 300f;
 
-    private Texture lixoTexture;    // coletável
+    private Texture lixoTexture;
     private Array<Rectangle> lixos;
 
-    private Texture bulletTexture;  // obstáculo
+    private Texture lixo20Texture;
+    private Texture lixo40Texture;
+    private Array<Rectangle> lixos20;
+    private Array<Rectangle> lixos40;
+
+
+    private Texture bulletTexture;
     private Array<Rectangle> bullets;
 
     private float spawnLixoTimer;
@@ -59,23 +63,32 @@ public class GameScreen implements Screen {
 
     private OrthographicCamera camera;
 
-    private boolean isButtonPressed(Rectangle bounds){
-        if (Gdx.input.justTouched()) {
-            Vector3 touchPos = new
-                    Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
-            camera.unproject(touchPos);
-            return
-                    bounds.contains(touchPos.x, touchPos.y);
-        }
-        return false;
+    private float screenWidth;
+    private float screenHeight;
+
+    private float buttonOpacity = 0.5f;
+
+    private boolean isButtonTouched(Rectangle bounds) {
+        Vector3 touchPos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+        camera.unproject(touchPos);
+        return bounds.contains(touchPos.x, touchPos.y);
+    }
+
+    private void drawButtonWithOpacity(Texture texture, Rectangle buttonBounds) {
+        batch.setColor(1, 1, 1, buttonOpacity);
+        batch.draw(texture, buttonBounds.x, buttonBounds.y, buttonBounds.width, buttonBounds.height);
+        batch.setColor(1, 1, 1, 1);
     }
 
     public GameScreen(FlappyShapeGame game, String dificuldade) {
         this.game = game;
         this.batch = game.batch;
 
+        screenWidth = Gdx.graphics.getWidth();
+        screenHeight = Gdx.graphics.getHeight();
+
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, 1280,720);
+        camera.setToOrtho(false, screenWidth, screenHeight);
 
         switch (dificuldade) {
             case "Lento":
@@ -97,13 +110,18 @@ public class GameScreen implements Screen {
 
         backgroundpause = new Texture("pause.jpeg");
 
+        lixo20Texture = new Texture("lixo20.png");
+        lixo40Texture = new Texture("lixo40.png");
+
+        lixos20 = new Array<>();
+        lixos40 = new Array<>();
+
     }
 
     @Override
     public void show() {
-
-        upTexture = new Texture("up.jpeg");
-        downTexture = new Texture("down.jpeg");
+        upTexture = new Texture("uppng.png");
+        downTexture = new Texture("downpng.png");
         pngpause = new Texture("pause.png");
         background = new Texture("background.png");
         playerTexture = new Texture("player.png");
@@ -111,13 +129,16 @@ public class GameScreen implements Screen {
         playerRegion.flip(true, false);
         lixoTexture = new Texture("lixo.png");
         bulletTexture = new Texture("bullet.png");
-        pauseButton = new Rectangle(1280 - 74, 656, 64, 64);
+
+        pauseButton = new Rectangle(screenWidth - 148, screenHeight - 148, 128, 128);
 
         player = new Rectangle();
         player.x = 100;
-        player.y = 720 / 2f - 32; // centralizado verticalmente (720/2 - metade do player)
-        player.width = 64;
-        player.height = 64;
+        player.y = screenHeight / 2f - 48;
+        player.width = 150;
+        player.height = 150;
+
+
 
         lixos = new Array<>();
         bullets = new Array<>();
@@ -130,194 +151,271 @@ public class GameScreen implements Screen {
         font = new BitmapFont();
         score = 0;
 
-        float btnSize = 64;
-        float padding = 20;
+        float btnSize = screenWidth * 0.12f;
+        float padding = screenWidth * 0.03f;
 
-        upButton = new Rectangle(Gdx.graphics.getWidth() - btnSize - padding,
-                Gdx.graphics.getHeight() - btnSize - padding,  btnSize, btnSize);
+        upButton = new Rectangle(screenWidth - btnSize - padding,
+                padding + btnSize + padding, btnSize, btnSize);
 
-        downButton = new Rectangle(Gdx.graphics.getWidth() - btnSize - padding,
-                Gdx.graphics.getHeight() - 2 * (btnSize + padding),  btnSize, btnSize);
+        downButton = new Rectangle(screenWidth - btnSize - padding,
+                padding, btnSize, btnSize);
     }
 
     @Override
     public void render(float delta) {
+        batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
+        // Fundo
+        bgX -= bgSpeed * delta;
+        if (bgX <= -screenWidth) {
+            bgX = 0;
+        }
 
-        // Atualizar fundo rolante
-        bgX -= 200 * delta;
-        if (bgX <= -background.getWidth()) bgX = 0;
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        // Verificar clique no botão de pausa
+        camera.update();
+        batch.setProjectionMatrix(camera.combined);
+
+        batch.begin();
+        batch.draw(background, bgX, 0, screenWidth, screenHeight);
+        batch.draw(background, bgX + screenWidth, 0, screenWidth, screenHeight);
+        batch.end();
+
+        // Botão de pausa
         if (Gdx.input.justTouched()) {
             Vector3 touch = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
-            game.camera.unproject(touch);
+            camera.unproject(touch);
             if (pauseButton.contains(touch.x, touch.y)) {
                 paused = true;
             }
         }
 
-// Se pausado, exibe menu de pausa
         if (paused) {
             batch.begin();
-            batch.draw(backgroundpause, 0, 0, 1280, 720);
-            font.draw(batch, "Retomar", 250, 120);
-            font.draw(batch, "Reiniciar", 550, 120);
-            font.draw(batch, "Menu Principal", 850, 120);
+            batch.draw(backgroundpause, 0, 0, screenWidth, screenHeight);
             batch.end();
 
             if (Gdx.input.justTouched()) {
                 Vector3 touch = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
-                game.camera.unproject(touch);
+                camera.unproject(touch);
 
-                if (touch.y > 100 && touch.y < 140 && touch.x > 200 && touch.x < 300) paused = false; // Retomar
-                else if (touch.y > 100 && touch.y < 140 && touch.x > 500 && touch.x < 600)
-                    game.setScreen(new GameScreen(game, "Medio")); // Reinicia com mesma dificuldade (ajustar se necessário)
-                else if (touch.y > 120 && touch.y < 140 && touch.x > 800 && touch.x < 900)
-                    game.setScreen(new MenuScreen(game)); // Volta ao menu
+                float btnWidth = screenWidth * 0.6f;
+                float btnHeight = screenHeight * 0.12f;
+                float centerX = screenWidth / 3f - btnWidth / 2f;
+
+                Rectangle btnRetornar = new Rectangle(centerX, screenHeight * 0.4f, btnWidth / 1.35f - 10, btnHeight);
+                Rectangle btnReiniciar = new Rectangle(centerX + btnWidth / 1.5f + 100, screenHeight * 0.4f, btnWidth / 1.35f - 10, btnHeight);
+                Rectangle btnMenu = new Rectangle(centerX, screenHeight * 0.1f, btnWidth, btnHeight);
+
+                if (btnRetornar.contains(touch.x, touch.y)) paused = false;
+                else if (btnReiniciar.contains(touch.x, touch.y)) game.setScreen(new GameScreen(game, "Medio"));
+                else if (btnMenu.contains(touch.x, touch.y)) game.setScreen(new MenuScreen(game));
             }
-            return; // não processa jogo se pausado
+            return;
         }
 
 
-        // Controle do player W e S, limitar dentro da tela (0 a 720)
-        if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-            player.y += playerSpeed * delta;
-            if (player.y > 720 - player.height) player.y = 720 - player.height;
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-            player.y -= playerSpeed * delta;
-            if (player.y < 0) player.y = 0;
-        }
-
-        // Controle do player botões, limitar dentro da tela (0 a 720)
-        if (isButtonPressed(upButton)) {
-            player.y += playerSpeed * delta;
-            if (player.y > 720 - player.height) player.y = 720 - player.height;
-        }
-        if (isButtonPressed(downButton)) {
-            player.y -= playerSpeed * delta;
-            if (player.y < 0) player.y = 0;
+        // controle
+        if (Gdx.input.isTouched()) {
+            if (isButtonTouched(upButton)) {
+                player.y += playerSpeed * delta;
+                if (player.y > screenHeight - player.height) player.y = screenHeight - player.height;
+            }
+            if (isButtonTouched(downButton)) {
+                player.y -= playerSpeed * delta;
+                if (player.y < 0) player.y = 0;
+            }
         }
 
-        // Spawnar lixo (coletável)
+
+        // spawn dos obstaculos
         spawnLixoTimer -= delta;
         if (spawnLixoTimer <= 0) {
+            float tipo = MathUtils.random();
+
             Rectangle lixo = new Rectangle();
-            lixo.x = 1280;
-            lixo.y = MathUtils.random(0, 720 - 64);
+            lixo.x = screenWidth;
+            lixo.y = MathUtils.random(0, screenHeight - 64);
             lixo.width = 64;
-            lixo.height = 64;
-            lixos.add(lixo);
+            lixo.height = 98;
+
+            if (tipo < 0.7f) {
+                lixos.add(lixo);
+            } else if (tipo < 0.95f) {
+                lixos20.add(lixo);
+            } else {
+                lixos40.add(lixo);
+            }
+
             spawnLixoTimer = spawnLixoInterval;
         }
 
-        // Spawnar bullets (obstáculos)
+
         spawnBulletTimer -= delta;
         if (spawnBulletTimer <= 0) {
             Rectangle bullet = new Rectangle();
-            bullet.x = 1280;
-            bullet.y = MathUtils.random(0, 720 - 64);
-            bullet.width = 64;
-            bullet.height = 64;
+            bullet.x = screenWidth;
+            bullet.y = MathUtils.random(0, screenHeight - 96);
+            bullet.width = 100;
+            bullet.height = 100;
             bullets.add(bullet);
             spawnBulletTimer = spawnBulletInterval;
         }
 
-        // Atualizar lixos e verificar coleta
+        // colisão lixo
+
         for (int i = 0; i < lixos.size; i++) {
             Rectangle lixo = lixos.get(i);
             lixo.x -= velocidadeLixo * delta;
 
-            // Remover lixo que saiu da tela
             if (lixo.x + lixo.width < 0) {
                 lixos.removeIndex(i);
                 i--;
                 continue;
             }
 
-            // Coleta
-            if (lixo.overlaps(player)) {
-                score += 10;  // pontos ao coletar lixo
+            Rectangle playerHitbox = new Rectangle(
+                    player.x + player.width * 0.1f,
+                    player.y + player.height * 0.1f,
+                    player.width * 0.8f,
+                    player.height * 0.8f
+            );
+
+            Rectangle lixoHitbox = new Rectangle(
+                    lixo.x + lixo.width * 0.1f,
+                    lixo.y + lixo.height * 0.1f,
+                    lixo.width * 0.8f,
+                    lixo.height * 0.8f
+            );
+
+            if (lixoHitbox.overlaps(playerHitbox)) {
+                score += 10;
                 lixos.removeIndex(i);
                 i--;
             }
         }
 
-        // Atualizar bullets e verificar colisão
+        for (int i = 0; i < lixos20.size; i++) {
+            Rectangle lixo = lixos20.get(i);
+            lixo.x -= velocidadeLixo * delta;
+
+            if (lixo.x + lixo.width < 0) {
+                lixos20.removeIndex(i);
+                i--;
+                continue;
+            }
+
+            Rectangle playerHitbox = new Rectangle(
+                    player.x + player.width * 0.1f,
+                    player.y + player.height * 0.1f,
+                    player.width * 0.8f,
+                    player.height * 0.8f
+            );
+
+            Rectangle lixoHitbox = new Rectangle(
+                    lixo.x + lixo.width * 0.1f,
+                    lixo.y + lixo.height * 0.1f,
+                    lixo.width * 0.8f,
+                    lixo.height * 0.8f
+            );
+
+            if (lixoHitbox.overlaps(playerHitbox)) {
+                score += 20;
+                lixos20.removeIndex(i);
+                i--;
+            }
+        }
+
+
+        for (int i = 0; i < lixos40.size; i++) {
+            Rectangle lixo = lixos40.get(i);
+            lixo.x -= velocidadeLixo * delta;
+
+            if (lixo.x + lixo.width < 0) {
+                lixos40.removeIndex(i);
+                i--;
+                continue;
+            }
+
+            Rectangle playerHitbox = new Rectangle(
+                    player.x + player.width * 0.1f,
+                    player.y + player.height * 0.1f,
+                    player.width * 0.8f,
+                    player.height * 0.8f
+            );
+
+            Rectangle lixoHitbox = new Rectangle(
+                    lixo.x + lixo.width * 0.1f,
+                    lixo.y + lixo.height * 0.1f,
+                    lixo.width * 0.8f,
+                    lixo.height * 0.8f
+            );
+
+            if (lixoHitbox.overlaps(playerHitbox)) {
+                score += 40;
+                lixos40.removeIndex(i);
+                i--;
+            }
+        }
+
+
+
+        // colisão tubarão
         for (int i = 0; i < bullets.size; i++) {
             Rectangle bullet = bullets.get(i);
             bullet.x -= velocidadeBullet * delta;
 
-            // Remover bullet que saiu da tela
             if (bullet.x + bullet.width < 0) {
                 bullets.removeIndex(i);
                 i--;
                 continue;
             }
 
-            // Colisão que termina jogo
-            if (bullet.overlaps(player)) {
-                if (score > game.getHighScore()) {
-                    game.setHighScore(score);
-                }
-                game.setScreen(new GameOverScreen(game, score)); // voltar para tela de Game Over
+            Rectangle playerHitbox = new Rectangle(
+                    player.x + player.width * 0.1f,
+                    player.y + player.height * 0.1f,
+                    player.width * 0.8f,
+                    player.height * 0.8f
+            );
+
+            Rectangle bulletHitbox = new Rectangle(
+                    bullet.x + bullet.width * 0.1f,
+                    bullet.y + bullet.height * 0.1f,
+                    bullet.width * 0.8f,
+                    bullet.height * 0.8f
+            );
+
+            if (bulletHitbox.overlaps(playerHitbox)) {
+                if (score > game.getHighScore()) game.setHighScore(score);
+                game.setScreen(new GameOverScreen(game, score));
                 dispose();
                 return;
             }
         }
 
-        // Renderização
-        Gdx.gl.glClearColor(0, 0, 0, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         batch.begin();
-
-        // Fundo rolando (duas vezes lado a lado para loop contínuo)
-        batch.draw(background, bgX, 0, background.getWidth(), 720);
-        batch.draw(background, bgX + background.getWidth(), 0, background.getWidth(), 720);
-
-        // Player
-        batch.draw(playerRegion, player.x, player.y, 95, 78);
-
-        // Lixos (coletáveis)
-        for (Rectangle lixo : lixos) {
+        batch.draw(playerRegion, player.x, player.y, 100, 100);
+        for (Rectangle lixo : lixos)
             batch.draw(lixoTexture, lixo.x, lixo.y, lixo.width, lixo.height);
-        }
+        for (Rectangle lixo : lixos20)
+            batch.draw(lixo20Texture, lixo.x, lixo.y, lixo.width, lixo.height);
+        for (Rectangle lixo : lixos40)
+            batch.draw(lixo40Texture, lixo.x, lixo.y, lixo.width, lixo.height);
+        for (Rectangle bullet : bullets)
+            batch.draw(bulletTexture, bullet.x, bullet.y, bullet.width, bullet.height);
 
-        // Bullets (obstáculos)
-        for (Rectangle bullet : bullets) {
-            batch.draw(bulletTexture, bullet.x, bullet.y, 78, 78);
-        }
-
-        // Pontuação
-        font.getData().setScale(2f);
-        font.draw(batch, "Pontos: " + score, 50, 700);
-
-        batch.end();
-
-        batch.begin();
+        font.getData().setScale(4f);
+        font.draw(batch, "Pontos: " + score, 20, screenHeight - 40);
         batch.draw(pngpause, pauseButton.x, pauseButton.y, pauseButton.width, pauseButton.height);
+        drawButtonWithOpacity(upTexture, upButton);
+        drawButtonWithOpacity(downTexture, downButton);
         batch.end();
-
-
-        // Setas
-        batch.begin();
-        batch.draw(upTexture, 900, 300, 300, 200);
-        batch.draw(downTexture, 900, 50, 300, 200);
-        batch.end();
-
-
-
-        // setas fim
-
     }
 
     @Override
-    public void resize(int width, int height) {
-        // Centralizar viewport se necessário, mas estamos usando resolução fixa
-    }
-
+    public void resize(int width, int height) {}
     @Override
     public void pause() {}
     @Override
@@ -334,6 +432,8 @@ public class GameScreen implements Screen {
         font.dispose();
         upTexture.dispose();
         downTexture.dispose();
+        lixo20Texture.dispose();
+        lixo40Texture.dispose();
 
     }
 

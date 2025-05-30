@@ -1,12 +1,17 @@
 background.png
 bullet.png
 circle.png
+dificuldade.jpeg
 down.jpeg
+downpng.png
 font.ttf
 gameover.jpeg
 lixo.png
+lixo20.png
+lixo40.png
 pause.jpeg
 pause.png
 player.png
 start.jpeg
 up.jpeg
+uppng.png
